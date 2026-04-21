@@ -1,7 +1,3 @@
----
-title: 数字信号处理
----
-
 # 数字信号处理
 
 > 本文档仅用于复习蒋武杨老师的课程《数字信号处理》。参考书本为《数字信号处理（第五版）》9787560664828。
@@ -135,7 +131,7 @@ x(n) = x(n + mN) \qquad m为整数
 $$
 则称序列$x(n)$为**周期性序列**，周期为$N$。
 
->  对于一般正弦序列与负指数序列的周期性讨论请查看书本P9。
+>  对于一般正弦序列与负指数序列的周期性讨论请查阅书本P9。
 
 ### P12
 
@@ -156,4 +152,61 @@ $$
 ### P19
 
 如果对有界输入，系统产生的输出也是有界的，则称该系统具有稳定性质，或称该系统为**稳定系统**。
+
+### P24
+
+#### 模拟信号数字处理框图
+$$
+x_a(t) \xrightarrow{\quad} \boxed{\text{预滤波}} \xrightarrow{\quad} \boxed{\text{ADC}} \xrightarrow{\quad} \boxed{\text{数字信号处理}} \xrightarrow{\quad} \boxed{\text{DAC}} \xrightarrow{\quad} \boxed{\text{平滑滤波}} \xrightarrow{\quad} y_a(t)
+$$
+
+> ADC(Analog/Digital Converter) 模/数转换器
+> DAC(Digital/Analog Converter) 数/模转换器
+
+### P27
+
+总结上述内容，采样定理叙述如下：
+
+（1）对连续信号进行等间隔采样形成采样信号，采样信号的频谱是原连续信号的频谱以采样频率 $\Omega_s$ 为周期进行周期性的延拓形成的，用如下公式表示。
+
+$$
+\begin{align*}
+\hat{X}_a(j\Omega) &= \frac{1}{2\pi} X_a(j\Omega) * P_\delta(j\Omega) \\
+&= \frac{1}{2\pi} \cdot \frac{2\pi}{T} \int_{-\infty}^{\infty} X_a(j\theta) \sum_{k=-\infty}^{\infty} \delta(\Omega - k\Omega_s - \theta) d\theta \\
+&= \frac{1}{T} \sum_{k=-\infty}^{\infty} \int_{-\infty}^{\infty} X_a(j\theta) \delta(\Omega - k\Omega_s - \theta) d\theta \\
+&= \frac{1}{T} \sum_{k=-\infty}^{\infty} X_a(j\Omega - jk\Omega_s)
+\end{align*}
+$$
+
+> 关键符号说明：
+> $\hat{X}_a(j\Omega)$：采样信号的频谱；
+> $X_a(j\Omega)$：原连续信号的频谱；
+> $P_{\delta}(j\Omega)$：采样脉冲（冲击串）的频谱；
+> $\Omega_s = \frac{2\pi}{T}$：采样角频率（$T$ 为采样周期）；
+> $\delta(\cdot)$：单位冲击函数；
+> $k$：整数，代表周期延拓的“副本”序号。
+
+（2）设连续信号 $x_a(t)$ 属带限信号，最高截止频率为 $\Omega_c$，如果采样角频率 $\Omega_s \ge 2\Omega_c$（采样频率$F_s\geq 2f_c$），那么让采样信号 $\hat{x}_a(t)$ 通过一个增益为 $T$、截止频率为 $\Omega_s/2 = \pi/T$ 的理想低通滤波器，可以唯一地恢复出原连续信号 $x_a(t)$。否则，$\Omega_s < 2\Omega_c$ 会造成采样信号中的频谱混叠现象，不可能无失真地恢复原连续信号。
+
+实际中对模拟信号进行采样，需根据模拟信号的截止频率，按照采样定理的要求选择采样频率，即 $\Omega_s \ge 2\Omega_c$，但考虑到理想滤波器 $G(j\Omega)$ 不可实现，要有一定的过渡带，为此可选 $\Omega_s = (2 + \alpha)\Omega_c$，$\alpha > 0$。另外，可以在采样之前加一抗混叠的低通滤波器，滤除高于 $\Omega_s / 2$ 的一些无用的高频分量和其他的一些杂散信号。这就是在[**模拟信号数字处理框图中**](#模拟信号数字处理框图)采样之前加**预滤波**的原因。
+
+> 加**平滑滤波器**的原因请查阅书本P32第五行
+
+## 第2章
+
+> 时域离散信号和系统的频域分析
+
+### P79
+
+设系统初始状态为零，系统对输入为单位脉冲序列 $\delta(n)$ 的响应输出称为系统的单位脉冲响应 $h(n)$。对 $h(n)$ 进行傅里叶变换，得到：
+
+$$H(e^{j\omega}) = \sum_{n=-\infty}^{\infty} h(n)e^{-j\omega n} = |H(e^{j\omega})|e^{j\varphi(\omega)}$$
+
+一般称 $H(e^{j\omega})$ 为系统的**频率响应函数**，或称系统的传输函数，它表征系统的频率响应特性。$|H(e^{j\omega})|$ 称为**幅频特性函数**，$\varphi(\omega)$ 称为**相频特性函数**。
+
+将 $h(n)$ 进行 $Z$ 变换，得到 $H(z)$，一般称 $H(z)$ 为系统的系统函数，它表征了系统的复频域特性。对 $N$ 阶差分方程进行 $Z$ 变换，得到系统函数的一般表示式：
+
+$$H(z) = \frac{Y(z)}{X(z)} = \frac{\sum_{i=0}^{M} b_i z^{-i}}{\sum_{i=0}^{N} a_i z^{-i}}$$
+
+> 上面提到的 ”对 $h(n)$ 进行傅里叶变换“ 、”对 $h(n)$ 进行 $Z$ 变换“ 等术语，在我们学习时可不用理会，即使不学文中所说的 ”傅里叶变换“、” $Z$ 变换“ ，仍能理解相关知识点。
 
