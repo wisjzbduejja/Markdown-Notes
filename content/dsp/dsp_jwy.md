@@ -302,7 +302,7 @@ XK = fft(xn, N)
 ### P118
 
 用 DFT 分析连续信号谱的原理示意图
-![用 DFT 分析连续信号谱的原理示意图](https://img.awmc.site/img/IMG_20260421_215909.jpg)
+![用 DFT 分析连续信号谱的原理示意图](https://img.imgos.cn/cdn/20260422/4297d94347920655e8a16503c6d7d6f0.jpg)
 
 
 ---
